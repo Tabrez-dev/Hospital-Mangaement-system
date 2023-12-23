@@ -46,3 +46,10 @@ Access the Application:
 
 Open your web browser and go to http://localhost:8080.
 Use the web interface to add, update, or delete patients.
+
+
+
+
+
+![image](https://github.com/Tabrez-dev/Hospital-Mangaement-system-Spring-boot-html-javascript/assets/75200693/da663c89-d18b-46c8-a972-db98cfcb4837)
+
