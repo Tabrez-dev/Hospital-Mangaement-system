@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System</title>
+</head>
+<body>
+    <h1>Hospital Management System</h1>
+
+    <form id="patientForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="status">Admission Status:</label>
+        <input type="text" id="status" name="status" required>
+
+        <label for="covidStatus">COVID Status:</label>
+        <input type="text" id="covidStatus" name="covidStatus" required>
+
+        <button type="button" onclick="addPatient()">Add Patient</button>
+    </form>
+
+    <h2>Patients</h2>
+    <table id="patientTable" border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Admission Status</th>
+            <th>COVID Status</th>
+            <th>Action</th>
+        </tr>
+    </table>
+
+    <script>
+        async function updateAdmissionStatus(patientId, newStatus) {
+            const response = await fetch(`http://localhost:8080/patients/${patientId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    status: newStatus
+                })
+            });
+
+            if (response.ok) {
+                // If the request was successful, reload the patient list
+                await fetchPatients();
+            } else {
+                alert('Failed to update admission status');
+            }
+        }
+
+        async function updateCovidStatus(patientId, newCovidStatus) {
+            const response = await fetch(`http://localhost:8080/patients/${patientId}/covid-status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    covidStatus: newCovidStatus
+                })
+            });
+
+            if (response.ok) {
+                // If the request was successful, reload the patient list
+                await fetchPatients();
+            } else {
+                alert('Failed to update COVID status');
+            }
+        }
+
+        async function addPatient() {
+            const name = document.getElementById("name").value;
+            const status = document.getElementById("status").value;
+            const covidStatus = document.getElementById("covidStatus").value;
+
+            const response = await fetch('http://localhost:8080/patients', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    status: status,
+                    covidStatus: covidStatus
+                })
+            });
+
+            if (response.ok) {
+                // If the request was successful, reload the patient list
+                await fetchPatients();
+            } else {
+                alert('Failed to add patient');
+            }
+        }
+
+        async function fetchPatients() {
+            const response = await fetch('http://localhost:8080/patients');
+            const patients = await response.json();
+
+            const table = document.getElementById("patientTable");
+            // Clear the table
+            table.innerHTML = "<tr><th>ID</th><th>Name</th><th>Admission Status</th><th>COVID Status</th><th>Action</th></tr>";
+
+            // Populate the table with patient data
+            patients.forEach(patient => {
+                const row = table.insertRow();
+                row.insertCell(0).textContent = patient.id;
+                row.insertCell(1).textContent = patient.name;
+                row.insertCell(2).textContent = patient.status;
+                row.insertCell(3).textContent = patient.covidStatus;
+
+                // Add buttons for delete and update
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function() { deletePatient(patient.id); };
+
+                const updateAdmissionButton = document.createElement("button");
+                updateAdmissionButton.textContent = "Update Admission Status";
+                updateAdmissionButton.onclick = function() {
+                    const newStatus = prompt("Enter new admission status:");
+                    if (newStatus !== null) {
+                        updateAdmissionStatus(patient.id, newStatus);
+                    }
+                };
+
+                const updateCovidButton = document.createElement("button");
+                updateCovidButton.textContent = "Update COVID Status";
+                updateCovidButton.onclick = function() {
+                    const newCovidStatus = prompt("Enter new COVID status:");
+                    if (newCovidStatus !== null) {
+                        updateCovidStatus(patient.id, newCovidStatus);
+                    }
+                };
+
+                const actionCell = row.insertCell(4);
+                actionCell.appendChild(deleteButton);
+                actionCell.appendChild(updateAdmissionButton);
+                actionCell.appendChild(updateCovidButton);
+            });
+        }
+
+        // Fetch patients when the page loads
+        fetchPatients();
+
+    </script>
+</body>
+</html>
