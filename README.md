@@ -51,5 +51,5 @@ Use the web interface to add, update, or delete patients.
 
 
 
-![image](https://github.com/Tabrez-dev/Hospital-Mangaement-system-Spring-boot-html-javascript/assets/75200693/da663c89-d18b-46c8-a972-db98cfcb4837)
+![immgg](https://github.com/Tabrez-dev/Hospital-Mangaement-system-Spring-boot-html-javascript/assets/75200693/0d69c5e9-96aa-4083-b069-5850f47f5da6)
 
